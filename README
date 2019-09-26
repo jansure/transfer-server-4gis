@@ -14,3 +14,13 @@ skp2gltp微服务（仓库地址：http://49.4.66.187/yangpengfei/skp2gltf-serve
 备注：
 若5000端口有改变，则进入lua-script，改动 SKP2GLTF.lua里边的端口即可
 若8081端口有改变，则计入lua-script，改动upload_file.lua里边的8081端口即可。
+
+调用例子：
+接口调用方式：
+ 1、上传文件 PUT请求  http://localhost:8080/upload?unzip=true  
+       body参数类型为files，然后选中要上传的文件
+       返回值为：token
+ 2、开启计算 POST请求  http://localhost:8080/SKP2GLTF 
+       body参数名称为text类型的名称为dirid的第一步中的token
+ 
+ 还可以通过配置nginx的配置文件和lua-script来定制化自己的接口服务。
