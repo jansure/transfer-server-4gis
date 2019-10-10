@@ -28,9 +28,11 @@ if not unzip or unzip == "" then
 end
 
 -- 创建新文件夹
+local workhome = "workhome/"
 -- 生成一个随机标识，作为新文件夹名称
 local dirName = guid.generate()
 ngx.log(ngx.INFO, "待新建的目录名称：", dirName)
+local dir = workhome .. dirName
 local res1, err1 = httpc:request_uri(
         fileManager,
         {
@@ -43,7 +45,7 @@ local res1, err1 = httpc:request_uri(
                 ["Content-Type"] = "application/json;charset=UTF-8",
             },
             -- 请求体数据
-            body = "{\"action\":\"createFolder\",\"params\":{\"source\":\"/"..dirName.."\"}}"
+            body = "{\"action\":\"createFolder\",\"params\":{\"source\":\"/"..dir.."\"}}"
         }
 )
 --若文件夹创建失败，则返回状态码并退出
@@ -58,7 +60,7 @@ end
 ngx.req.read_body()
 local res, err = ngx.location.capture('/uploadAndUnzip',
         { method = ngx.HTTP_PUT,
-          args = {unzip = unzip, destPath = dirName},
+          args = {unzip = unzip, destPath = dir},
           always_forward_body = true }
 )
 
@@ -74,23 +76,23 @@ if not res or res.status ~= ngx.HTTP_OK then
                     ["Content-Type"] = "application/json;charset=UTF-8",
                 },
                 --{"action":"delete","paramslist":["/7AED6B57-18E1-B312-77E9-B756AE4D65F9"]}
-                body = "{\"action\":\"delete\",\"paramslist\":[\"/"..dirName.."\"]}"
+                body = "{\"action\":\"delete\",\"paramslist\":[\"/"..dir.."\"]}"
             }
     )
     if not res2 or res2.status ~= ngx.HTTP_OK then
-        ngx.log(ngx.ERR, "删除创建的目录：", dirName, "失败，err：", err2)
+        ngx.log(ngx.ERR, "删除创建的目录：", dir, "失败，err：", err2)
         ngx.status = res2.status
         ngx.print("删除创建的目录失败：", err2)
         ngx.exit(ngx.status)
     end
-    ngx.log(ngx.INFO, "已删除创建的目录：", dirName)
+    ngx.log(ngx.INFO, "已删除创建的目录：", dir)
     ngx.status = res.status
     -- 如果调用上传接口失败，则使用子请求状态码退出
     ngx.exit(res.status)
 end
 
 if res.truncated then
-    ngx.log(ngx.ERR, "上传文件时数据被意外截断！文件所在目录：", dirName)
+    ngx.log(ngx.ERR, "上传文件时数据被意外截断！文件所在目录：", dir)
 end
 
 --创建result文件夹
@@ -103,17 +105,17 @@ local res3, err3 = httpc:request_uri(
             headers = {
                 ["Content-Type"] = "application/json;charset=UTF-8",
             },
-            body = "{\"action\":\"createFolder\",\"params\":{\"source\":\"/"..dirName.."/result\"}}"
+            body = "{\"action\":\"createFolder\",\"params\":{\"source\":\"/"..dir.."/result\"}}"
         }
 )
 if not res3 or res3.status ~= ngx.HTTP_OK then
     ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR
-    ngx.log(ngx.ERR, "在目录：", dirName, "下创建result目录失败，err：", err3)
+    ngx.log(ngx.ERR, "在目录：", dir, "下创建result目录失败，err：", err3)
     ngx.print("创建result目录失败：", err3)
     ngx.exit(ngx.status)
 end
 -- res.body="ok"
-ngx.log(ngx.INFO, "上传文件完成：", res.body, " 所在目录为：", dirName)
+ngx.log(ngx.INFO, "上传文件完成：", res.body, " 所在目录为：", dir)
 --ngx.print("上传文件所在目录为：", dirName)
 -- 输出json格式的结果 例如：{ "dirid": "19B512E8-2D34-99A4-7EB9-81FA91647B84"}
 ngx.print(json.encode({dirid=dirName}))

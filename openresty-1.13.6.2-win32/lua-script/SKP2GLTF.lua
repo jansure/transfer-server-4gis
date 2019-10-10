@@ -25,16 +25,15 @@ local args = {
     -- 先在此端口上启动sockpro服务 ./sockproc.exe 5000 --foreground
     socket = {host = "127.0.0.1", port = 5000},
     -- 连接超时时间（毫秒）
-    timeout = 30000000,
+    timeout = 300000,
     data = "\r\n",
 }
-
+local dir = "workhome/" .. dirid
 -- 启动计算进程
 local exeDir = "`cd /cygdrive/d/openform-web/Skp2Gltf/` /cygdrive/d/openform-web/Skp2Gltf/Skp2Gltf.exe"
-local skpDir = " `cygpath -w /cygdrive/d/openform-web/fileserver/"..dirid.."` "
-local GLTFDir = " `cygpath -w  /cygdrive/d/openform-web/fileserver/"..dirid.."/result".."` "
+local skpDir = " `cygpath -w /cygdrive/d/openform-web/fileserver/"..dir.."` "
+local GLTFDir = " `cygpath -w  /cygdrive/d/openform-web/fileserver/"..dir.."/result".."` "
 local cmd = exeDir .. skpDir .. GLTFDir
-
 
 --local status, result, err = shell.execute("/cygdrive/d/openform-web/Skp2Gltf/Skp2Gltf.exe `cygpath -w /cygdrive/d/openform-web/Skp2Gltf/data` `cygpath -w  /cygdrive/d/openform-web/Skp2Gltf/data`", args)
 local status, result, err = shell.execute(cmd, args)

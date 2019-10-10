@@ -28,11 +28,11 @@ local args = {
     timeout = 3000,
     data = "\r\n",
 }
-
+local dir = "workhome/" .. dirid
 -- 启动计算进程
 local exeDir = "/cygdrive/d/openform-web/VTKRelease/VTK2GLTF.exe"
-local vtkDir = " `cygpath -w /cygdrive/d/openform-web/VTKRelease/"..dirid.."` "
-local GLTFDir = " `cygpath -w  /cygdrive/d/openform-web/VTKRelease/"..dirid.."/result".."` "
+local vtkDir = " `cygpath -w /cygdrive/d/openform-web/fileserver/"..dir.."` "
+local GLTFDir = " `cygpath -w  /cygdrive/d/openform-web/fileserver/"..dir.."/result".."` "
 local GDAL_DATADir = " `cygpath -w /cygdrive/d/openform-web/VTKRelease/GDAL_DATA` "
 local cmd = exeDir .. vtkDir .. GLTFDir .. GDAL_DATADir
 
